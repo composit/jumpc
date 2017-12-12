@@ -24,7 +24,7 @@ func TestListen(t *testing.T) {
 		t.Fatalf("server returned a bad response code: %d\n", c)
 	}
 
-	expected := "MD-yGkEFDmjAFhaO0iyTQiVPs7JgThHTgB-MwX5AyYrpoA-6oHcfQqS2nCGAmyEoqblHGjp_i7VRhyRJIXGyHw=="
+	expected := "a5ftaNFOs/GqlZzl1Jx9xhLh6x2v1zsecFhHSD/WpsgJ8s606N9v+ZhMYpj/AoXKzmYUv42qnwBwEBtsiYmeIg"
 	if actual := rec.Body.String(); expected != actual {
 		t.Errorf("server returned a bad hash: want %s, got %s\n", expected, actual)
 	}
