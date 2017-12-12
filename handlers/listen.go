@@ -6,9 +6,10 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/composit/jumpc/pkg/encoder"
+	"github.com/composit/jumpc/pkg/encode"
 )
 
+// Listen creates the handler to accept incoming http requests.
 func Listen(port string) {
 	http.HandleFunc("/", PwdHash)
 
@@ -16,6 +17,9 @@ func Listen(port string) {
 	log.Fatal(http.ListenAndServe(addr, nil))
 }
 
+// PwdHash handles incoming http requests for hashed passwords.
+// The password is parsed out of the body, SHA512 hashed,
+// Base64 encoded, and returned.
 func PwdHash(w http.ResponseWriter, req *http.Request) {
 	pwd, err := ioutil.ReadAll(req.Body)
 	if err != nil {
@@ -23,8 +27,8 @@ func PwdHash(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	h := encoder.Hash(pwd)
-	b := encoder.Base64(h)
+	h := encode.Hash(pwd)
+	b := encode.Base64(h)
 	if _, err = w.Write([]byte(b)); err != nil {
 		w.WriteHeader(500)
 		return

@@ -1,4 +1,4 @@
-package encoder_test
+package encode_test
 
 import (
 	"fmt"
