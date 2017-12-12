@@ -16,7 +16,7 @@ func Hash(pwd []byte) []byte {
 // Base64 takes a byte slice and Base64 encodes it.
 // It returns a byte slice.
 func Base64(data []byte) []byte {
-	enc := base64.URLEncoding
+	enc := base64.StdEncoding
 	buf := make([]byte, enc.EncodedLen(len(data)))
 	enc.Encode(buf, data)
 	return buf

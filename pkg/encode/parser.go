@@ -5,12 +5,12 @@ import (
 	"regexp"
 )
 
-func GetPwd(input string) (string, error) {
+func GetPwd(input []byte) ([]byte, error) {
 	r := regexp.MustCompile("password=(.*)")
-	matches := r.FindStringSubmatch(input)
+	matches := r.FindSubmatch(input)
 
 	if len(matches) != 2 {
-		return "", fmt.Errorf("improperly formatted input: %s", input)
+		return []byte{}, fmt.Errorf("improperly formatted input: %s", input)
 	}
 
 	return matches[1], nil
