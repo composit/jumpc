@@ -21,7 +21,13 @@ func Listen(port string) {
 // The password is parsed out of the body, SHA512 hashed,
 // Base64 encoded, and returned.
 func PwdHash(w http.ResponseWriter, req *http.Request) {
-	pwd, err := ioutil.ReadAll(req.Body)
+	input, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		w.WriteHeader(500)
+		return
+	}
+
+	pwd, err := encode.GetPwd(input)
 	if err != nil {
 		w.WriteHeader(500)
 		return
