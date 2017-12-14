@@ -5,7 +5,7 @@ import (
 	"regexp"
 )
 
-func GetPwd(input []byte) ([]byte, error) {
+func getPwd(input []byte) ([]byte, error) {
 	r := regexp.MustCompile("password=(.*)")
 	matches := r.FindSubmatch(input)
 

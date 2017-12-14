@@ -5,17 +5,25 @@ import (
 	"encoding/base64"
 )
 
-// Hash takes a byte slice and hashes it using SHA512.
-// It returns a byte slice.
-func Hash(pwd []byte) []byte {
+// Do takes a string, parses out the password, hashes it and returns
+// a base64 string of the hash
+func Do(input []byte) ([]byte, error) {
+	pwd, err := getPwd(input)
+	if err != nil {
+		return []byte{}, err
+	}
+
+	hsh := hash(pwd)
+	return b64(hsh), nil
+}
+
+func hash(pwd []byte) []byte {
 	hasher := sha512.New()
 	hasher.Write(pwd)
 	return hasher.Sum(nil)
 }
 
-// Base64 takes a byte slice and Base64 encodes it.
-// It returns a byte slice.
-func Base64(data []byte) []byte {
+func b64(data []byte) []byte {
 	enc := base64.StdEncoding
 	buf := make([]byte, enc.EncodedLen(len(data)))
 	enc.Encode(buf, data)

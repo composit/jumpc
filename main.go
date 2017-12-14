@@ -5,12 +5,12 @@ import (
 	"log"
 	"os"
 
-	"github.com/composit/jumpc/handlers"
+	"github.com/composit/jumpc/pkg/server"
 )
 
 func main() {
 	stop := make(chan struct{})
-	srv, err := handlers.NewServer(os.Args[1], stop)
+	srv, err := server.NewServer(os.Args[1], stop)
 	if err != nil {
 		log.Fatalf("failed to initialize the server: %s", err)
 	}

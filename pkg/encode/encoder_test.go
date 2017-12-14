@@ -1,29 +1,38 @@
 package encode_test
 
 import (
+	"bytes"
 	"fmt"
 	"testing"
 
 	"github.com/composit/jumpc/pkg/encode"
 )
 
-func TestHash(t *testing.T) {
-	orig := []byte("test")
-	hsh := encode.Hash(orig)
+func TestDo(t *testing.T) {
+	orig := []byte("password=test")
+	out, err := encode.Do(orig)
+	if err != nil {
+		t.Fatalf("failed to encode the password: %s\n", err)
+	}
 
-	// the base16 string representation of the hash
-	expected := "ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db27ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff"
-	if actual := fmt.Sprintf("%x", hsh); expected != actual {
+	// the base64 string representation of the hash
+	expected := "7iaw3Ur350mqGo7jwQrpkj9hiYB3Lkc/iBml1JQODbJ6wYX4oOHV+E+IvIh/1nsUNzLDBMxfqa2Ob1f1ACio/w=="
+	if actual := fmt.Sprintf("%s", out); expected != actual {
 		t.Errorf("SHA512 hashes do not match: want %s, got %s\n", expected, actual)
 	}
 }
 
-func TestBase64(t *testing.T) {
-	orig := []byte("test")
-	b64 := encode.Base64(orig)
+func TestDoBadInput(t *testing.T) {
+	input := []byte("pwd=P@ssw0rd")
 
-	expected := "dGVzdA=="
-	if actual := string(b64); expected != actual {
-		t.Errorf("base64 strings do not match: want %s, got %s\n", expected, actual)
+	_, err := encode.Do(input)
+	if err == nil {
+		t.Fatal(err)
+	}
+
+	msg := []byte(err.Error())
+	expected := []byte("improperly formatted")
+	if !bytes.Contains(msg, expected) {
+		t.Errorf("unknown error message: `%s` does not contain `%s`.", msg, expected)
 	}
 }
