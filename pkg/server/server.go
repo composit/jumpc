@@ -29,7 +29,7 @@ func NewServer(port string, stop chan struct{}) (*http.Server, error) {
 
 	go func(srv *http.Server) {
 		if err := srv.ListenAndServe(); err != nil {
-			log.Printf("%s\n", err)
+			log.Printf("%s", err)
 		}
 	}(srv)
 
