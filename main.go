@@ -11,7 +11,7 @@ import (
 
 func main() {
 	stop := make(chan struct{})
-	srv := handlers.Server(os.Args[1], stop)
+	srv := handlers.NewServer(os.Args[1], stop)
 
 	<-stop
 

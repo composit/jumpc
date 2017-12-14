@@ -16,8 +16,8 @@ func TestListen(t *testing.T) {
 	}
 
 	rec := httptest.NewRecorder()
-	h := handler{}
-	handler := http.HandlerFunc(handlers.PwdHash)
+	h := handlers.HandlerChan{}
+	handler := http.HandlerFunc(h.PwdHash)
 
 	handler.ServeHTTP(rec, req)
 

@@ -11,13 +11,14 @@ import (
 	"github.com/composit/jumpc/pkg/encode"
 )
 
-type handler struct {
+type HandlerChan struct {
 	C chan struct{}
 }
 
-// Server creates the handler to accept incoming http requests.
-func Server(port string, stop chan struct{}) *http.Server {
-	h := handler{
+// NewServer creates the server and handlers to accept incoming
+// http requests.
+func NewServer(port string, stop chan struct{}) *http.Server {
+	h := HandlerChan{
 		C: stop,
 	}
 	http.HandleFunc("/", h.PwdHash)
@@ -37,7 +38,7 @@ func Server(port string, stop chan struct{}) *http.Server {
 // PwdHash handles incoming http requests for hashed passwords.
 // The password is parsed out of the body, SHA512 hashed,
 // Base64 encoded, and returned.
-func (h *handler) PwdHash(w http.ResponseWriter, req *http.Request) {
+func (h *HandlerChan) PwdHash(w http.ResponseWriter, req *http.Request) {
 	timez := time.NewTimer(5 * time.Second)
 
 	input, err := ioutil.ReadAll(req.Body)
