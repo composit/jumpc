@@ -6,18 +6,25 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/composit/jumpc/pkg/encode"
 )
 
+// HandlerChan holds the channel that the handlers can use to
+// communicate when to stop the server.
 type HandlerChan struct {
 	C chan struct{}
 }
 
 // NewServer creates the server and handlers to accept incoming
 // http requests.
-func NewServer(port string, stop chan struct{}) *http.Server {
+func NewServer(port string, stop chan struct{}) (*http.Server, error) {
+	if err := validatePort(port); err != nil {
+		return nil, err
+	}
+
 	h := HandlerChan{
 		C: stop,
 	}
@@ -32,7 +39,7 @@ func NewServer(port string, stop chan struct{}) *http.Server {
 		}
 	}(srv)
 
-	return srv
+	return srv, nil
 }
 
 // PwdHash handles incoming http requests for hashed passwords.
@@ -49,7 +56,9 @@ func (h *HandlerChan) PwdHash(w http.ResponseWriter, req *http.Request) {
 
 	if bytes.Equal(input, []byte("graceful shutdown")) {
 		close(h.C)
-		w.Write([]byte("ok"))
+		if _, err := w.Write([]byte("ok")); err != nil {
+			log.Println("failed to respond to graceful shutdown request")
+		}
 		return
 	}
 
@@ -68,4 +77,14 @@ func (h *HandlerChan) PwdHash(w http.ResponseWriter, req *http.Request) {
 		w.WriteHeader(500)
 		return
 	}
+}
+
+// validate port performs simple port validation
+// it simply checks if the port is numerical
+func validatePort(port string) error {
+	if _, err := strconv.Atoi(port); err != nil {
+		return fmt.Errorf("bad port specified: %s", port)
+	}
+
+	return nil
 }
