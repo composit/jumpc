@@ -15,6 +15,9 @@ import (
 // Base64 encoded, and returned.
 func (h *HandlerChan) PwdHash(w http.ResponseWriter, req *http.Request) {
 	timez := time.NewTimer(5 * time.Second)
+	// stop the timer in case of early return
+	// we can't have too many 5 second timers building up!
+	defer timez.Stop()
 
 	input, err := ioutil.ReadAll(req.Body)
 	if err != nil {
