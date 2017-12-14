@@ -18,28 +18,28 @@ func (h *HandlerChan) PwdHash(w http.ResponseWriter, req *http.Request) {
 
 	input, err := ioutil.ReadAll(req.Body)
 	if err != nil {
-		w.WriteHeader(500)
+		respondErr(err, w)
 		return
 	}
 
 	if bytes.Equal(input, []byte("graceful shutdown")) {
 		close(h.C)
 		if _, err := w.Write([]byte("ok")); err != nil {
-			log.Println("failed to respond to graceful shutdown request")
+			log.Printf("failed to respond to graceful shutdown request: %s", err)
 		}
 		return
 	}
 
 	b, err := encode.Do(input)
 	if err != nil {
-		w.WriteHeader(500)
+		respondErr(err, w)
 		return
 	}
 
 	<-timez.C
 
 	if _, err = w.Write(b); err != nil {
-		w.WriteHeader(500)
+		respondErr(err, w)
 		return
 	}
 }

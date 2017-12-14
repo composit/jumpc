@@ -35,3 +35,12 @@ func NewServer(port string, stop chan struct{}) (*http.Server, error) {
 
 	return srv, nil
 }
+
+func respondErr(err error, w http.ResponseWriter) {
+	log.Printf("ERROR: %s", err)
+	w.WriteHeader(500)
+	s := fmt.Sprintf("%s", err)
+	if _, err := w.Write([]byte(s)); err != nil {
+		log.Printf("failed to respond with error message: %s", err)
+	}
+}
